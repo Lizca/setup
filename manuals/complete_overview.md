@@ -2,12 +2,12 @@
 
 ## Quickstart and Basics
 
-- [Quick-Start-Manual for new Students](manuals/quick_start_new_student.md)
+- [Quick-Start-Manual for new Students](quick_start_new_student.md)
 
 ## Hardware 
 
-- [Overview of the Hardware-Setup](manuals/hardware_overview.md)
+- [Overview of the Hardware-Setup](hardware_overview.md)
 
 ## Installation 
 
-- [Installation and basic configuration](manuals/installation_and_basic_configuration.md)
+- [Installation and basic configuration](installation_and_basic_configuration.md)
