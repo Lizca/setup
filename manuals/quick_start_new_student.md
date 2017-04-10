@@ -20,9 +20,9 @@ Eingesetzt wird aktuell das Betriebssystem **Ubuntu 16.04 LTS (Xenial)** mit **R
   * [Nachrichtentyp](http://wiki.ros.org/msg)
   * [standardmäßig Datentypen](http://wiki.ros.org/ROS/Higher-Level%20Concepts#Message_Ontology)
   * [Packages](http://wiki.ros.org/Packages)
-  * [Bag-File](http://wiki.ros.org/Bags)
-  * [RQT](http://wiki.ros.org/rqt)
-  * [RViz](http://wiki.ros.org/rviz)
+  * [Bag-File](http://wiki.ros.org/Bags) - *Aufnahmetool*
+  * [RQT](http://wiki.ros.org/rqt) - *Plugin-Framework mit hilfreichen Plugins*
+  * [RViz](http://wiki.ros.org/rviz) - *Visualisierung*
 * [Tutorials](http://wiki.ros.org/ROS/Tutorials)
 
 
@@ -60,25 +60,41 @@ Das tatsächliche Übertragen und Empfangen der Daten wird dabei von ROS abgenom
 
 Mit den eben beschriebenen Mechanismen sollten sich die meisten Probleme lösen bzw. Funktionalitäten umsetzen lassen.
 Darüber hinaus sind in ROS mehrere Werkzeuge verfügbar, welche die Arbeit unterstützen. 
-So können mit dem Programm ``rosbag`` online Daten der Topics als [Bag-File](http://wiki.ros.org/Bags) aufgezeichnet und später wieder offline abgespielt werden.
+So können online mit dem Programm ``rosbag`` Daten der Topics als [Bag-File](http://wiki.ros.org/Bags) aufgezeichnet und später wieder offline abgespielt werden.
 Mit [RQT](http://wiki.ros.org/rqt) stehen viele Plugins (anzeigen der Topics sowie Nachrichten, plotten von Werten, etc.) als GUI zur Verfügung.
 Und Visualisierungen (Karten, Punktewolken, Robotermodelle, ...) erhält man mit [RViz](http://wiki.ros.org/rviz).
-
-
 
 
 ### Hands-On aka Anfang mit Tutorials
 
 Wer zum ersten mal mit ROS in Berührung kommt und noch immer verwirrt ist macht nichts falsch, das ist normal!
+Genau hierfür gibt es eine vielzahl von [Tutorials](http://wiki.ros.org/ROS/Tutorials) welche einen Schritt für Schritt an die arbeit mit ROS heranführen.
 
 
+#### Beginner Level
 
- 
-TBD, [Tutorials](http://wiki.ros.org/ROS/Tutorials)
+1. [Installing and Configuring Your ROS Environment](http://wiki.ros.org/ROS/Tutorials/InstallingandConfiguringROSEnvironment)
+2. [Navigating the ROS Filesystem](http://wiki.ros.org/ROS/Tutorials/NavigatingTheFilesystem)
+3. [Creating a ROS Package](http://wiki.ros.org/ROS/Tutorials/CreatingPackage)
+4. [Building a ROS Package](http://wiki.ros.org/ROS/Tutorials/BuildingPackages)
+5. [Understanding ROS Nodes](http://wiki.ros.org/ROS/Tutorials/UnderstandingNodes)
+6. [Understanding ROS Topics](http://wiki.ros.org/ROS/Tutorials/UnderstandingTopics)
+8. [Using rqt_console and roslaunch](http://wiki.ros.org/ROS/Tutorials/UsingRqtconsoleRoslaunch)
+11. [Writing a Simple Publisher and Subscriber (C++)](http://wiki.ros.org/ROS/Tutorials/WritingPublisherSubscriber%28c%2B%2B%29)
+12. [Writing a Simple Publisher and Subscriber (Python)](http://wiki.ros.org/ROS/Tutorials/WritingPublisherSubscriber%28python%29)
+13. [Examining the Simple Publisher and Subscriber](http://wiki.ros.org/ROS/Tutorials/ExaminingPublisherSubscriber)
+17. [Recording and playing back data](http://wiki.ros.org/ROS/Tutorials/Recording%20and%20playing%20back%20data)
+19. [Navigating the ROS wiki](http://wiki.ros.org/ROS/Tutorials/NavigatingTheWiki)
 
 
+#### Intermediate Level
 
- 
+4. [Running ROS across multiple machines](http://wiki.ros.org/ROS/Tutorials/MultipleMachines)
+
+#### Build-System
+
+* [Catkin Tutorials](wiki.ros.org/catkin/Tutorials)
+
 
 
 
