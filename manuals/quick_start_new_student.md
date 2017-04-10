@@ -74,28 +74,28 @@ Die nachstehende Auswahl gilt als Empfehlung für den Einsteig.
 
 #### Beginner Level
 
-1. [Installing and Configuring Your ROS Environment](http://wiki.ros.org/ROS/Tutorials/InstallingandConfiguringROSEnvironment)
-2. [Navigating the ROS Filesystem](http://wiki.ros.org/ROS/Tutorials/NavigatingTheFilesystem)
-3. [Creating a ROS Package](http://wiki.ros.org/ROS/Tutorials/CreatingPackage)
-4. [Building a ROS Package](http://wiki.ros.org/ROS/Tutorials/BuildingPackages)
-5. [Understanding ROS Nodes](http://wiki.ros.org/ROS/Tutorials/UnderstandingNodes)
-6. [Understanding ROS Topics](http://wiki.ros.org/ROS/Tutorials/UnderstandingTopics)
-8. [Using rqt_console and roslaunch](http://wiki.ros.org/ROS/Tutorials/UsingRqtconsoleRoslaunch)
-11. [Writing a Simple Publisher and Subscriber (C++)](http://wiki.ros.org/ROS/Tutorials/WritingPublisherSubscriber%28c%2B%2B%29)
-12. [Writing a Simple Publisher and Subscriber (Python)](http://wiki.ros.org/ROS/Tutorials/WritingPublisherSubscriber%28python%29)
-13. [Examining the Simple Publisher and Subscriber](http://wiki.ros.org/ROS/Tutorials/ExaminingPublisherSubscriber)
-17. [Recording and playing back data](http://wiki.ros.org/ROS/Tutorials/Recording%20and%20playing%20back%20data)
-19. [Navigating the ROS wiki](http://wiki.ros.org/ROS/Tutorials/NavigatingTheWiki)
+* (1) [Installing and Configuring Your ROS Environment](http://wiki.ros.org/ROS/Tutorials/InstallingandConfiguringROSEnvironment)
+* (2) [Navigating the ROS Filesystem](http://wiki.ros.org/ROS/Tutorials/NavigatingTheFilesystem)
+* (3) [Creating a ROS Package](http://wiki.ros.org/ROS/Tutorials/CreatingPackage)
+* (4) [Building a ROS Package](http://wiki.ros.org/ROS/Tutorials/BuildingPackages)
+* (5) [Understanding ROS Nodes](http://wiki.ros.org/ROS/Tutorials/UnderstandingNodes)
+* (6) [Understanding ROS Topics](http://wiki.ros.org/ROS/Tutorials/UnderstandingTopics)
+* (8) [Using rqt_console and roslaunch](http://wiki.ros.org/ROS/Tutorials/UsingRqtconsoleRoslaunch)
+* (11) [Writing a Simple Publisher and Subscriber (C++)](http://wiki.ros.org/ROS/Tutorials/WritingPublisherSubscriber%28c%2B%2B%29)
+* (12) [Writing a Simple Publisher and Subscriber (Python)](http://wiki.ros.org/ROS/Tutorials/WritingPublisherSubscriber%28python%29)
+* (13) [Examining the Simple Publisher and Subscriber](http://wiki.ros.org/ROS/Tutorials/ExaminingPublisherSubscriber)
+* (17) [Recording and playing back data](http://wiki.ros.org/ROS/Tutorials/Recording%20and%20playing%20back%20data)
+* (19) [Navigating the ROS wiki](http://wiki.ros.org/ROS/Tutorials/NavigatingTheWiki)
 
 
 #### Intermediate Level
 
-4. [Running ROS across multiple machines](http://wiki.ros.org/ROS/Tutorials/MultipleMachines)
+* (4) [Running ROS across multiple machines](http://wiki.ros.org/ROS/Tutorials/MultipleMachines)
 
 
 #### [Catkin Tutorials](http://wiki.ros.org/catkin/Tutorials)
 
-4. [Overlaying with catkin workspaces](http://wiki.ros.org/catkin/Tutorials/workspace_overlaying)
+* (4) [Overlaying with catkin workspaces](http://wiki.ros.org/catkin/Tutorials/workspace_overlaying)
 
 
 
