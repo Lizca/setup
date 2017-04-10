@@ -18,7 +18,7 @@ Eingesetzt wird aktuell das Betriebssystem **Ubuntu 16.04 LTS (Xenial)** mit **R
   * [Nodes](http://wiki.ros.org/Nodes)
   * [Topic](http://wiki.ros.org/Topics)
   * [Nachrichtentyp](http://wiki.ros.org/msg)
-  * [standardmäßig Datentypen](http://wiki.ros.org/ROS/Higher-Level%20Concepts#Message_Ontology)
+  * [standardmäßige Datentypen](http://wiki.ros.org/ROS/Higher-Level%20Concepts#Message_Ontology) - *``common_msgs`` stack*
   * [Packages](http://wiki.ros.org/Packages)
   * [Bag-File](http://wiki.ros.org/Bags) - *Aufnahmetool*
   * [RQT](http://wiki.ros.org/rqt) - *Plugin-Framework mit hilfreichen Plugins*
@@ -69,6 +69,7 @@ Und Visualisierungen (Karten, Punktewolken, Robotermodelle, ...) erhält man mit
 
 Wer zum ersten mal mit ROS in Berührung kommt und noch immer verwirrt ist macht nichts falsch, das ist normal!
 Genau hierfür gibt es eine vielzahl von [Tutorials](http://wiki.ros.org/ROS/Tutorials) welche einen Schritt für Schritt an die arbeit mit ROS heranführen.
+Die nachstehende Auswahl gilt als Empfehlung für den Einsteig.
 
 
 #### Beginner Level
@@ -93,7 +94,8 @@ Genau hierfür gibt es eine vielzahl von [Tutorials](http://wiki.ros.org/ROS/Tut
 
 #### Build-System
 
-* [Catkin Tutorials](wiki.ros.org/catkin/Tutorials)
+* [Catkin Tutorials](http://wiki.ros.org/catkin/Tutorials)
+  4. [Overlaying with catkin workspaces](http://wiki.ros.org/catkin/Tutorials/workspace_overlaying)
 
 
 
