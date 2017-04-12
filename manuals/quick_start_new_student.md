@@ -39,7 +39,7 @@ Soll die eigene Umgebung mit dem Roboter kommunizieren sind im Wesentlichen zwei
 1. Der Rechner, welcher als Master fungiert muss bekannt sein. Dies lässt sich mit dem Setzen einer [Umgebungsvariable](http://wiki.ros.org/ROS/EnvironmentVariables#ROS_MASTER_URI) bewerkstelligen. Anstelle einer IP-Adresse, wird allerdings der "Name des Rechners" angegeben.
 2. Der logische Name muss sich zu einer IP-Adresse auflösen lassen. Dies geschieht nicht automatisch. Hierfür muss der [Name explizit](http://wiki.ros.org/ROS/NetworkSetup#Setting_a_name_explicitly) gesetzt werden. Hierfür wird am besten ein Eintrag (Punkt 2.3) in der "hosts" datei (z.B. ``/etc/hosts``) hinzugefügt. **Wichtig:** Da sich beide Rechner finden müssen, muss man den **Eintrag auf beiden Rechner hinzufügen**. 
 
-### Informeller Einstig in ROS
+### Informeller Einstieg in ROS
 
 Was ROS ist und welche Ziele verfolgt werden, ist in der [Einführung](http://wiki.ros.org/ROS/Introduction) festgehalten. 
 Weiterführend werden auch die entsprechenden [Konzepte](http://wiki.ros.org/ROS/Concepts) von ROS beschrieben. 
