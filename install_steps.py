@@ -13,8 +13,8 @@ class InstallSteps:
     cp = ColorPrinter()
 
     def step_01(self):
-        """Step 1: Setup language and time settings"""
-        self.cp.cfg('y', None, 'ib').out(self.step_01.__doc__)
+        """Setup language and time settings"""
+        self.cp.cfg('y', None, 'ib').out("Step 1:", self.step_01.__doc__)
         self.cp.out(len(self.step_01.__doc__) * '"')
 
         self.cp.cfg('y', None, 'i').out("Set system language and keyboard layout")
@@ -39,19 +39,21 @@ class InstallSteps:
 
         self.cp.cfg('y', None, 'i').out("Generate locales")
         cmd = ['cp', 'templates/locale.gen', '/etc/locale.gen']
-        #subprocess.call(["locale-gen"])
+        execute_command(cmd)
+        cmd = (["locale-gen"])
+        execute_command(cmd)
         cp.cfg('k', 'g', 'f').out("-> Successful")
         print()
 
 
 
     def step_02(self):
-        """Step 2: Set hostname"""
-        self.cp.cfg('y', None, 'ib').out(self.step_02.__doc__)
+        """Set hostname"""
+        self.cp.cfg('y', None, 'ib').out("Step 2:", self.step_02.__doc__)
         self.cp.out(len(self.step_02.__doc__) * '"')
 
         cmd = ['hostnamectl', 'set-hostname', htb_config[int(self.robot)]][0]
-        #execute_command(cmd)
+        execute_command(cmd)
         print_info("The hostname has been set to " + htb_config[int(self.robot)][0] + ' ('+htb_config[int(self.robot)][3]+')')
 
         self.cp.cfg('k', 'g', 'f').out("-> Successfull")
@@ -59,8 +61,8 @@ class InstallSteps:
 
 
     def step_03(self):
-        """Step 3: Setup user account robot-local"""
-        self.cp.cfg('y', None, 'ib').out(self.step_03.__doc__)
+        """Setup user account robot-local"""
+        self.cp.cfg('y', None, 'ib').out("Step 3:", self.step_03.__doc__)
         self.cp.out(len(self.step_03.__doc__) * '"')
 
         self.cp.cfg('y', None, 'i').out("Check if the user robot-local exists")
@@ -85,8 +87,8 @@ class InstallSteps:
 
 
     def step_04(self):
-        """Step 4: Setup network connection"""
-        self.cp.cfg('y', None, 'ib').out(self.step_04.__doc__)
+        """Setup network connection"""
+        self.cp.cfg('y', None, 'ib').out("Step 4:", self.step_04.__doc__)
         self.cp.out(len(self.step_04.__doc__) * '"')
 
         self.cp.cfg('y', None, 'i').out("Create file /etc/network/interfaces")
@@ -106,9 +108,9 @@ class InstallSteps:
 
         self.cp.cfg('y', None, 'i').out("Start ethernet connection")
         cmd = ['ifdown', 'eth0']
-        # execute_command(cmd)
+        execute_command(cmd)
         cmd = ['ifup', '-v', 'eth0']
-        # execute_command(cmd)
+        execute_command(cmd)
         self.cp.cfg('y', None, 'i').out("Test connection")
         cmd = ['ping', '-c2', 'www.github.com']
         execute_command(cmd)
@@ -117,8 +119,8 @@ class InstallSteps:
 
 
     def step_05(self):
-        """Step 5: Add htb-packages to APT-Sources"""
-        self.cp.cfg('y', None, 'ib').out(self.step_05.__doc__)
+        """Add htb-packages to APT-Sources"""
+        self.cp.cfg('y', None, 'ib').out("Step 5:", self.step_05.__doc__)
         self.cp.out(len(self.step_05.__doc__) * '"')
 
         self.cp.cfg('y', None, 'i').out("Install depended Package")
@@ -139,10 +141,11 @@ class InstallSteps:
 
 
     def step_06(self):
-        """Step 6: Upgrade System"""
-        self.cp.cfg('y', None, 'ib').out(self.step_06.__doc__)
+        """Upgrade System"""
+        self.cp.cfg('y', None, 'ib').out("Step 6:", self.step_06.__doc__)
         self.cp.out(len(self.step_06.__doc__) * '"')
-
+        cmd = ['apt-get', 'update', '-y']
+        execute_command(cmd)
         cmd = ['apt-get', 'upgrade', '-y']
         execute_command(cmd)
         self.cp.cfg('k', 'g', 'f').out("-> Successfull")
@@ -150,19 +153,22 @@ class InstallSteps:
 
 
     def step_07(self):
-        """Step 7: Install base packages"""
-        self.cp.cfg('y', None, 'ib').out(self.step_07.__doc__)
+        """Install base packages"""
+        self.cp.cfg('y', None, 'ib').out("Step 7:", self.step_07.__doc__)
         self.cp.out(len(self.step_07.__doc__) * '"')
 
         for p in packages_to_install:
-            execute_command(["apt-get", "install", "-y", p])
-            self.cp.cfg('k', 'g', 'f').out("-> Successfull")
+            cmd = ["apt-get", "install", "-y"]
+            cmd.extend(p)
+            execute_command(cmd)
+
+        self.cp.cfg('k', 'g', 'f').out("-> Successfull")
         print()
 
 
     def step_08(self):
-        """Step 8: Setup additional system configuration"""
-        self.cp.cfg('y', None, 'ib').out(self.step_08.__doc__)
+        """Setup additional system configuration"""
+        self.cp.cfg('y', None, 'ib').out("Step 8:", self.step_08.__doc__)
         self.cp.out(len(self.step_08.__doc__) * '"')
 
         self.cp.cfg('y', None, 'i').out("Allow shutdown when powerbutton has been pressed")
@@ -194,7 +200,7 @@ class InstallSteps:
         groups.close()
 
         self.cp.cfg('y', None, 'i').out("Add name resolution to /etc/hosts")
-        for r in range(0, len(htb_config)):
+        for r in range(0, len(htb_config)-1): # don't add the external pc
             if not r == int(self.robot):
                 file = open("/etc/hosts_foo", 'r')
                 lines = file.readlines()
@@ -225,24 +231,22 @@ class InstallSteps:
 
                     file.close()
 
-
         self.cp.cfg('k', 'g', 'f').out("-> Successfull")
         print()
 
 
-
     def step_09(self):
-        """Step 9: Setup NFS"""
-        self.cp.cfg('y', None, 'ib').out(self.step_09.__doc__)
+        """Setup NFS"""
+        self.cp.cfg('y', None, 'ib').out("Step 9:", self.step_09.__doc__)
         self.cp.out(len(self.step_09.__doc__) * '"')
 
         self.cp.cfg('y', None, 'i').out("Install needed packages")
         cmd = ['apt-get', 'install', 'nfs-kernel-server', '-y']
-        #execute_command(cmd)
+        execute_command(cmd)
 
         self.cp.cfg('y', None, 'i').out("Create directory '/u'")
         cmd = ['mkdir', '/ u']
-        #execute_command(cmd)
+        execute_command(cmd)
 
         self.cp.cfg('y', None, 'i').out("Activate STATD")
         rewrite_file("/etc/default/nfs-common", "NEED_STATD", "NEED_STATD=yes\n")
@@ -253,7 +257,7 @@ class InstallSteps:
 
             self.cp.cfg('y', None, 'i').out("Mount external device")
             cmd = ['mount', '/u']
-            #execute_command(cmd)
+            execute_command(cmd)
             self.cp.cfg('y', None, 'i').out("Edit /etc/exports")
             rewrite_file("/etc/exports", "/u", "/u *(rw,fsid=0,sync,no_subtree_check)\n")
 
@@ -271,11 +275,11 @@ class InstallSteps:
 
             self.cp.cfg('y', None, 'i').out("Activate NFS")
             cmd = ['update-rc.d', 'autofs', 'defaults']
-            #execute_command(cmd)
+            execute_command(cmd)
             cmd = ['service', 'autofs', 'restart']
-            #execute_command(cmd)
+            execute_command(cmd)
             cmd = ['modprobe', 'nfs']
-            #execute_command(cmd)
+            execute_command(cmd)
 
         #cp.cfg('y', None, 'i').out("foo")
         #cmd = ['systemctl', 'daemon-reload']
@@ -290,8 +294,8 @@ class InstallSteps:
 
 
     def step_10(self):
-        """Step 10: ssh key exchange"""
-        self.cp.cfg('y', None, 'ib').out(self.step_10.__doc__)
+        """ssh key exchange"""
+        self.cp.cfg('y', None, 'ib').out("Step 10:", self.step_10.__doc__)
         self.cp.out(len(self.step_10.__doc__) * '"')
 
         tempname = "/tmp/file" + str(uuid.uuid4()) #os.tempnam()
@@ -307,15 +311,15 @@ class InstallSteps:
         cmd = ['cp', tempname + ".pub", '/home/robot-local/.ssh/id_rsa.pub']
         execute_command(cmd)
         cmd = ['ssh-copy-id', htb_config[int(self.robot)][0]]
-        #execute_command(cmd)
+        execute_command(cmd)
 
         self.cp.cfg('k', 'g', 'f').out("-> Successfull")
         print()
 
 
     def step_11(self):
-        """Step 11: Setup NTP"""
-        self.cp.cfg('y', None, 'ib').out(self.step_11.__doc__)
+        """Setup NTP"""
+        self.cp.cfg('y', None, 'ib').out("Step 11:", self.step_11.__doc__)
         self.cp.out(len(self.step_11.__doc__) * '"')
 
         self.cp.cfg('y', None, 'i').out("Install needed package")
@@ -323,19 +327,19 @@ class InstallSteps:
         execute_command(cmd)
         if self.actingType.value == ActingType.MASTER.value:
             self.cp.cfg('y', None, 'i').out("Edit /etc/ntp.conf")
-            #rewrite_file("/etc/ntp.conf", "pool 0.ubuntu", "server 0.pool.ntp.org\n")
-            #rewrite_file("/etc/ntp.conf", "restrict " + htb_config[0][1], "restrict " + htb_config[0][1] + " mask 255.255.255.0 nomodify notrap\n")
+            rewrite_file("/etc/ntp.conf", "pool 0.ubuntu", "server 0.pool.ntp.org\n")
+            rewrite_file("/etc/ntp.conf", "restrict " + htb_config[0][1], "restrict " + htb_config[0][1] + " mask 255.255.255.0 nomodify notrap\n")
         elif self.actingType.value == ActingType.SLAVE.value:
             self.cp.cfg('y', None, 'i').out("Edit /etc/ntp.conf")
-            #rewrite_file("/etc/ntp.conf", "pool 0.ubuntu", "server " + htb_config[0][1] + "\n")
+            rewrite_file("/etc/ntp.conf", "pool 0.ubuntu", "server " + htb_config[0][1] + "\n")
 
         self.cp.cfg('k', 'g', 'f').out("-> Successfull")
         print()
 
 
     def step_12(self):
-        """Step 12: Install ROS"""
-        self.cp.cfg('y', None, 'ib').out(self.step_12.__doc__)
+        """Install ROS"""
+        self.cp.cfg('y', None, 'ib').out("Step 12:", self.step_12.__doc__)
         self.cp.out(len(self.step_12.__doc__) * '"')
 
         self.cp.cfg('y', None, 'i').out("Setup source.list and keys")
@@ -357,16 +361,16 @@ class InstallSteps:
             execute_command(['apt-get', 'install', p])
 
         self.cp.cfg('y', None, 'i').out("Initialize rosdep")
-        # execute_command(['rosdep', 'init'])
-        # execute_command(['rosdep', 'update'])
+        execute_command(['rosdep', 'init'])
+        execute_command(['rosdep', 'update'])
         self.cp.cfg('k', 'g', 'f').out("-> Successfull")
         print()
 
 
     def step_13(self):
-        """Step 14: Create user robot"""
-        self.cp.cfg('y', None, 'ib').out(self.step_14.__doc__)
-        self.cp.out(len(self.step_14.__doc__) * '"')
+        """Create user robot"""
+        self.cp.cfg('y', None, 'ib').out("Step 13:", self.step_13.__doc__)
+        self.cp.out(len(self.step_13.__doc__) * '"')
 
         self.cp.cfg('y', None, 'i').out("Create new user 'robot'")
         self.cp.cfg('y', None, 'i').out("Create catkin workspace of robot")
@@ -376,9 +380,9 @@ class InstallSteps:
 
 
     def step_14(self):
-        """Step 15: Get own htb-packages from git"""
-        self.cp.cfg('y', None, 'ib').out(self.step_15.__doc__)
-        self.cp.out(len(self.step_15.__doc__) * '"')
+        """Get own htb-packages from git"""
+        self.cp.cfg('y', None, 'ib').out("Step 14:", self.step_14.__doc__)
+        self.cp.out(len(self.step_14.__doc__) * '"')
         cmd = ['apt-get', 'install', 'libfreenect2']
         print("todo...")
         print()
