@@ -93,11 +93,11 @@ class InstallSteps:
 
         self.cp.cfg('y', None, 'i').out("Create file /etc/network/interfaces")
         if False:
-            cmd = ['rm', '/etc/network/interfaces_foo']
+            cmd = ['rm', '/etc/network/interfaces']
             execute_command(cmd)
 
         tempfile = open("templates/interfaces")
-        interfaces = open("/etc/network/interfaces_foo", 'w+')
+        interfaces = open("/etc/network/interfaces", 'w+')
         for line in tempfile:
             if line.startswith("address"):
                 interfaces.write("address " + htb_config[int(self.robot)][1] + '\n')
@@ -202,7 +202,7 @@ class InstallSteps:
         self.cp.cfg('y', None, 'i').out("Add name resolution to /etc/hosts")
         for r in range(0, len(htb_config)-1): # don't add the external pc
             if not r == int(self.robot):
-                file = open("/etc/hosts_foo", 'r')
+                file = open("/etc/hosts", 'r')
                 lines = file.readlines()
                 file.close()
 
@@ -217,14 +217,14 @@ class InstallSteps:
                         break
 
                 if not host_exist:
-                    file = open("/etc/hosts_foo", 'r+')
+                    file = open("/etc/hosts", 'r+')
                     lines = file.readlines()
                     file.write(htb_config[r][1] + " " + htb_config[r][0] + '\n')
                     file.close()
 
 
                 elif host_exist and not ip_correct:
-                    file = open("/etc/hosts_foo", 'w')
+                    file = open("/etc/hosts", 'w')
                     file.write("\n" + htb_config[r][1] + " " + htb_config[r][0] + '\n')
                     for line in lines:
                         file.write(line)
@@ -245,15 +245,19 @@ class InstallSteps:
         execute_command(cmd)
 
         self.cp.cfg('y', None, 'i').out("Create directory '/u'")
-        cmd = ['mkdir', '/ u']
-        execute_command(cmd)
+        try:
+            os.makedirs("/ u")
+        except OSError as ex:
+            #print_info("Directory already exist.")
+            if not ex.errno == errno.EEXIST:
+                raise
 
         self.cp.cfg('y', None, 'i').out("Activate STATD")
         rewrite_file("/etc/default/nfs-common", "NEED_STATD", "NEED_STATD=yes\n")
 
         if self.actingType.value == ActingType.MASTER.value:
             self.cp.cfg('y', None, 'i').out("Editing '/etc/fstab'")
-            rewrite_file("/etc/fstab_foo", "[uuid]", "[uuid] /u ext4 rw,suid,dev,auto,nouser,sync,noatime,nofail 0 0\n")
+            rewrite_file("/etc/fstab", "[uuid]", "[uuid] /u ext4 rw,suid,dev,auto,nouser,sync,noatime,nofail 0 0\n")
 
             self.cp.cfg('y', None, 'i').out("Mount external device")
             cmd = ['mount', '/u']
@@ -281,16 +285,12 @@ class InstallSteps:
             cmd = ['modprobe', 'nfs']
             execute_command(cmd)
 
-        #cp.cfg('y', None, 'i').out("foo")
-        #cmd = ['systemctl', 'daemon-reload']
-        #execute_command(cmd)
+        cp.cfg('y', None, 'i').out("Reload /etc/fstab")
+        cmd = ['systemctl', 'daemon-reload']
+        execute_command(cmd)
 
         self.cp.cfg('k', 'g', 'f').out("-> Successfull")
         print()
-
-        #cp.cfg('y', None, 'ib').out("Initiate Reboot")
-        #cp.out('""""""""""""""""')
-        #print()
 
 
     def step_10(self):
@@ -351,19 +351,28 @@ class InstallSteps:
         execute_command(cmd)
 
         self.cp.cfg('y', None, 'i').out("Update ATP-sources")
-        execute_command(['apt-get', 'update'])
+        execute_command(['apt-get', 'update', '-y'])
 
         self.cp.cfg('y', None, 'i').out("Install ROS packages")
-        execute_command(['apt-get', 'install', 'ros-kinetic-ros-base'])
+        if int(self.robot) <= ActingType.SLAVE.value:
+            execute_command(['apt-get', 'install', 'ros-kinetic-ros-base', '-y'])
+        else:
+            execute_command(['apt-get', 'install', 'ros-kinetic-desktop-full', '-y'])
 
         self.cp.cfg('y', None, 'i').out("Install ros-turtlebot packages")
         for p in turtlebot_packages:
-            execute_command(['apt-get', 'install', p])
+            execute_command(['apt-get', 'install', '-y', p])
 
         self.cp.cfg('y', None, 'i').out("Initialize rosdep")
+        if os.path.isfile("/etc/ros/rosdep/sources.list.d/20-default.list"):
+            os.remove("/etc/ros/rosdep/sources.list.d/20-default.list")
         execute_command(['rosdep', 'init'])
-        execute_command(['rosdep', 'update'])
+
+        #execute_command(['rosdep', 'update'])
+
         self.cp.cfg('k', 'g', 'f').out("-> Successfull")
+        print("Please execute 'rosdep update' now!")
+
         print()
 
 
