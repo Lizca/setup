@@ -1,34 +1,33 @@
-# !/usr/bin/env python
-# -*- coding: utf-8 -*-
+#!/usr/bin/env python3
+#-*- coding: utf-8 -*-
 
 from __future__ import print_function
 
 import subprocess
-from enum import Enum
 from colors import ColorPrinter
 import install_steps
-import sys
+import sys, os
+
 
 ############
 # WARNING: #
 ############
-# The value of enum SLAVE has to be the number of existing client pcs.
-# The value of enum EXTERN has to be the value of SLAVE +1
+# The value of SLAVE has to be the number of existing client pcs.
+# The value of EXTERN has to be the value of SLAVE +1
 ########################################################################
-class ActingType(Enum):
-    UNDEFINED = -1
-    MASTER = 0
-    SLAVE = 2
-    EXTERN = 3
+UNDEFINED = -1
+MASTER = 0
+SLAVE = 2
+EXTERN = 3
 
 
 cp = ColorPrinter()
 
 htb_config = [
-    ['htb-b1', '10.0.0.10', ActingType.MASTER, 'Odroid Master'],
-    ['htb-n1', '10.0.0.20', ActingType.SLAVE, 'NUC Slave'],
-    ['htb-o1', '10.0.0.30', ActingType.SLAVE, 'Ordoid Slave'],
-    ['extern', None, ActingType.EXTERN, 'External pc']
+    ['htb-b1', '10.0.0.10', MASTER, 'Odroid Master'],
+    ['htb-n1', '10.0.0.20', SLAVE, 'NUC Slave'],
+    ['htb-o1', '10.0.0.30', SLAVE, 'Ordoid Slave'],
+    ['extern', None, EXTERN, 'External pc']
 ]
 
 packages_to_install = [
@@ -53,6 +52,7 @@ external_install_steps = [
     1, 5, 6, 7, 12
 ]
 
+
 def execute_command(cmd, input=None):
     p = subprocess.Popen(cmd, stdin=subprocess.PIPE)
     p.communicate(input=input)
@@ -66,6 +66,21 @@ def execute_command(cmd, input=None):
 
 def print_info(msg):
     print("\x1B[3m"+msg+"\x1B[23m")
+
+
+def print_section(msg):
+    cp.cfg('g', None, 'b').out((len(msg)+4) *'=')
+    cp.out('= ' + msg + ' =')
+    cp.cfg('g', None, 'b').out((len(msg)+4) *'=')
+
+
+def print_step(msg):
+    cp.cfg('y', None, 'ib').out(msg)
+    cp.out(len(msg) * '"')
+
+
+def print_subStep(msg):
+    cp.cfg('y', None, 'i').out(msg)
 
 
 def rewrite_file(fileStr, searchStr, inputStr):
@@ -106,9 +121,7 @@ if __name__ == "__main__":
         ext_fnc_list.append(fnc_str)
 
 
-    cp.cfg('g', None, 'b').out('===================')
-    cp.out('= START EXECUTION =')
-    cp.out('===================')
+    print_section("START EXECUTION")
     print()
 
     ###################################
@@ -116,10 +129,9 @@ if __name__ == "__main__":
     ###################################
 
     while True:
-        cp.cfg('y', None, 'ib').out("Configuration")
-        cp.out(len("Configuration") * '"')
+        print_step("Configuration")
 
-        cp.cfg('y', None, 'i').out("Choose TurtleBot pc")
+        print_subStep("Choose TurtleBot pc")
         print("Which TurtleBot pc do you want to setup? Choose one of the following numbers.")
         print(" 0:", htb_config[0][0], '('+htb_config[0][3]+")")
         print(" 1:", htb_config[1][0], '('+htb_config[1][3]+")")
@@ -129,8 +141,8 @@ if __name__ == "__main__":
         robot = input("->: ")
         print()
 
-        if ActingType.MASTER.value <= int(robot) <= ActingType.EXTERN.value:
-            if int(robot) <= ActingType.SLAVE.value:
+        if MASTER <= int(robot) <= EXTERN:
+            if int(robot) <= SLAVE:
                 print('You have chosen the pc:', '"' + htb_config[int(robot)][0] + '" (' + htb_config[int(robot)][3] + ")", 'with the IP address:', htb_config[int(robot)][1] + '.')
             else:
                 print('You have chosen the external pc.')
@@ -160,12 +172,12 @@ if __name__ == "__main__":
     while True:
         while True:
             print()
-            cp.cfg('y', None, 'i').out("Choose install step")
+            print_subStep("Choose install step")
             print("Which install step do you want to execute?")
             print("Type the number of step. Type 'a' or press 'Enter' to execute all steps.")
             print("Type q to quit!")
 
-            if int(robot) <= ActingType.SLAVE.value:
+            if int(robot) <= SLAVE:
                 for fnc_str in fnc_list:
                     fnc = getattr(install_steps.InstallSteps, fnc_str)
                     print(" ", fnc_str + ":", fnc.__doc__)
@@ -182,7 +194,7 @@ if __name__ == "__main__":
             elif pyVersion[0] >= 3:
                 step = input("-> : ")  # python 3
             else:
-                print("The currenty used python version is not compatible. Please use Python 2.5 or higher.")
+                print("The currenty used python version is not compatible. Please use Python2.5 or higher.")
                 exit(-1)
 
             if step == 'q':
@@ -194,7 +206,7 @@ if __name__ == "__main__":
                     break
                 elif 1 <= int(step) <= (numFnc+1):
                     step = int(step)
-                    if int(robot) == ActingType.EXTERN.value and step not in external_install_steps:
+                    if int(robot) == EXTERN and step not in external_install_steps:
                         raise RuntimeError
                     break
                 else:
@@ -209,17 +221,14 @@ if __name__ == "__main__":
         print()
 
 
-        cp.cfg('g', None, 'b').out('=========================')
-        cp.out('= STARTING INSTALLATION =')
-        cp.out('=========================')
+        print_section('STARTING INSTALLATION')
         print()
-
 
         if step > 0:
             fnc = getattr(install_steps.InstallSteps, fnc_list[step-1])
             fnc(installSteps)
         else:
-            if int(robot) <= ActingType.SLAVE.value:
+            if int(robot) <= SLAVE:
                 for fnc_num in range(0, len(fnc_list)):
                     fnc = getattr(install_steps.InstallSteps, fnc_list[fnc_num])
                     fnc(installSteps)
@@ -229,16 +238,11 @@ if __name__ == "__main__":
                     fnc(installSteps)
 
 
-            cp.cfg('g', None, 'b').out('=================================')
-            cp.out('= INSTALLATION ENDED SUCCESSFUL =')
-            cp.out('=================================')
+            print_section('INSTALLATION ENDED SUCCESSFULLLY')
             print()
-
             exit()
 
 
-        cp.cfg('g', None, 'b').out('=================================')
-        cp.out('= INSTALLATION ENDED SUCCESSFUL =')
-        cp.out('=================================')
+        print_section('INSTALLATION ENDED SUCCESSFULLY')
         print()
 
