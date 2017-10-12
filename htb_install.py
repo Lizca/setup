@@ -6,7 +6,7 @@ from __future__ import print_function
 import subprocess
 from colors import ColorPrinter
 import install_steps
-import sys, os
+import sys
 
 
 ############
@@ -52,7 +52,6 @@ external_install_steps = [
     1, 5, 6, 7, 12
 ]
 
-
 def execute_command(cmd, input=None):
     p = subprocess.Popen(cmd, stdin=subprocess.PIPE)
     p.communicate(input=input)
@@ -68,12 +67,6 @@ def print_info(msg):
     print("\x1B[3m"+msg+"\x1B[23m")
 
 
-def print_section(msg):
-    cp.cfg('g', None, 'b').out((len(msg)+4) *'=')
-    cp.out('= ' + msg + ' =')
-    cp.cfg('g', None, 'b').out((len(msg)+4) *'=')
-
-
 def print_step(msg):
     cp.cfg('y', None, 'ib').out(msg)
     cp.out(len(msg) * '"')
@@ -81,6 +74,17 @@ def print_step(msg):
 
 def print_subStep(msg):
     cp.cfg('y', None, 'i').out(msg)
+
+
+def print_section(msg):
+    cp.cfg('g', None, 'b').out((len(msg)+4) *'=')
+    cp.out('= ' + msg + ' =')
+    cp.cfg('g', None, 'b').out((len(msg)+4) *'=')
+
+
+def print_success():
+    cp.cfg('k', 'g', 'f').out("-> Successful")
+    print()
 
 
 def rewrite_file(fileStr, searchStr, inputStr):
@@ -154,7 +158,7 @@ if __name__ == "__main__":
             elif pyVersion[0] >= 3 :
                 userInput = input("type 'Y' or 'n': ") # python 3
             else:
-                print("The currenty used python version is not compatible. Please use Python 2.5 or higher.")
+                print("The currenty used python version is not compatible. Please use Python2.5 or higher.")
                 exit(-1)
 
             if userInput == "" or userInput == 'Y' or userInput == 'y':
@@ -217,8 +221,7 @@ if __name__ == "__main__":
                 continue
 
         print()
-        cp.cfg('k', 'g', 'f').out("-> Configuration Successful")
-        print()
+        print_success()
 
 
         print_section('STARTING INSTALLATION')

@@ -41,9 +41,8 @@ class InstallSteps:
         execute_command(cmd)
         cmd = (["locale-gen"])
         execute_command(cmd)
-        cp.cfg('k', 'g', 'f').out("-> Successful")
-        print()
 
+        print_success()
 
 
     def step_02(self):
@@ -54,8 +53,7 @@ class InstallSteps:
         execute_command(cmd)
         print_info("The hostname has been set to " + htb_config[int(self.robot)][0] + ' ('+htb_config[int(self.robot)][3]+')')
 
-        self.cp.cfg('k', 'g', 'f').out("-> Successfull")
-        print()
+        print_success()
 
 
     def step_03(self):
@@ -79,8 +77,7 @@ class InstallSteps:
         cmd = ['chpasswd', '-e']
         execute_command(cmd, input=b'robot-local:$6$q4PV2O6Zww/wqTzx$v4Fg21NOOovlSkkhIx/sRLGJSvt9FhSkUjNAkfW6OtenDp/DdI4EAHhLT.1KXhB6SNWL0xTgIx7ECXW60Yjzv1\n')
 
-        self.cp.cfg('k', 'g', 'f').out("-> Successfull")
-        print()
+        print_success()
 
 
     def step_04(self):
@@ -110,16 +107,16 @@ class InstallSteps:
         interfaces.close()
 
         print_subStep("Start ethernet connection")
-        cmd = ['ifdown', 'eth0']
+        cmd = ['ifdown', network]
         execute_command(cmd)
-        cmd = ['ifup', '-v', 'eth0']
+        cmd = ['ifup', '-v', network]
         execute_command(cmd)
 
         print_subStep("Test connection")
         cmd = ['ping', '-c2', 'www.github.com']
         execute_command(cmd)
-        self.cp.cfg('k', 'g', 'f').out("-> Successfull")
-        print()
+
+        print_success()
 
 
     def step_05(self):
@@ -139,8 +136,8 @@ class InstallSteps:
         print_subStep("Update APT-Sources")
         cmd = ['apt-get', 'update', '-y']
         execute_command(cmd)
-        self.cp.cfg('k', 'g', 'f').out("-> Successfull")
-        print()
+
+        print_success()
 
 
     def step_06(self):
@@ -151,8 +148,8 @@ class InstallSteps:
         execute_command(cmd)
         cmd = ['apt-get', 'upgrade', '-y']
         execute_command(cmd)
-        self.cp.cfg('k', 'g', 'f').out("-> Successfull")
-        print()
+
+        print_success()
 
 
     def step_07(self):
@@ -164,8 +161,7 @@ class InstallSteps:
             cmd.extend(p)
             execute_command(cmd)
 
-        self.cp.cfg('k', 'g', 'f').out("-> Successfull")
-        print()
+        print_success()
 
 
     def step_08(self):
@@ -223,7 +219,6 @@ class InstallSteps:
                     file.write(htb_config[r][1] + " " + htb_config[r][0] + '\n')
                     file.close()
 
-
                 elif host_exist and not ip_correct:
                     file = open("/etc/hosts", 'w')
                     file.write("\n" + htb_config[r][1] + " " + htb_config[r][0] + '\n')
@@ -232,8 +227,7 @@ class InstallSteps:
 
                     file.close()
 
-        self.cp.cfg('k', 'g', 'f').out("-> Successfull")
-        print()
+        print_success()
 
 
     def step_09(self):
@@ -289,8 +283,7 @@ class InstallSteps:
         cmd = ['systemctl', 'daemon-reload']
         execute_command(cmd)
 
-        self.cp.cfg('k', 'g', 'f').out("-> Successfull")
-        print()
+        print_success()
 
 
     def step_10(self):
@@ -312,8 +305,7 @@ class InstallSteps:
         cmd = ['ssh-copy-id', htb_config[int(self.robot)][0]]
         execute_command(cmd)
 
-        self.cp.cfg('k', 'g', 'f').out("-> Successfull")
-        print()
+        print_success()
 
 
     def step_11(self):
@@ -330,8 +322,7 @@ class InstallSteps:
         elif self.actingType == SLAVE:
             rewrite_file("/etc/ntp.conf", "pool 0.ubuntu", "server " + htb_config[0][1] + "\n")
 
-        self.cp.cfg('k', 'g', 'f').out("-> Successfull")
-        print()
+        print_success()
 
 
     def step_12(self):
@@ -374,8 +365,7 @@ class InstallSteps:
             cmd = ['sudo', '-u', user_name, 'rosdep', 'update']
             execute_command(cmd)
 
-        self.cp.cfg('k', 'g', 'f').out("-> Successfull")
-        print()
+        print_success()
 
 
     def step_13(self):
