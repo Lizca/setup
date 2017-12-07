@@ -30,12 +30,12 @@ packages_to_install = [
 ]
 
 turtlebot_packages = [
-    "ros-kinetic-turtlebot"
-    "ros-kinetic-turtlebot-stage"
-    #"ros-kinetic-turtlebot-apps",
-    #"ros-kinetic-turtlebot-interactions",
-    #"ros-kinetic-turtlebot-simulator",
-    #"ros-kinetic-ar-track-alvar-msgs"
+    "ros-kinetic-turtlebot",
+    "ros-kinetic-turtlebot-stage",
+    "ros-kinetic-turtlebot-apps",
+    "ros-kinetic-turtlebot-interactions",
+    "ros-kinetic-turtlebot-simulator",
+    "ros-kinetic-ar-track-alvar-msgs"
 ]
 
 external_install_steps = [

@@ -173,10 +173,12 @@ class InstallSteps:
         """Setup additional system configuration"""
         print_step("Step 8: " + str(self.step_08.__doc__))
 
-        #print_subStep("Allow shutdown when powerbutton has been pressed")
-        #cmd = ['cp', 'templates/powerbtn.sh', '/etc/acpi/powerbtn.sh']
-        #print_info("Edit file /etc/acpi/powerbtn.sh")
-        #execute_command(cmd)
+        '''
+            print_subStep("Allow shutdown when powerbutton has been pressed")
+            cmd = ['cp', 'templates/powerbtn.sh', '/etc/acpi/powerbtn.sh']
+            print_info("Edit file /etc/acpi/powerbtn.sh")
+            execute_command(cmd)
+        '''
 
         print_subStep("Let ssh server send alive signal")
         rewrite_file("/etc/ssh/sshd_config", "ClientAliveInterval", "ClientAliveInterval 60\n")
@@ -392,7 +394,7 @@ class InstallSteps:
         cmd = ['ln', '-s', '/opt/htb/htb-adduser.py', '/usr/bin/htb-adduser']
         execute_command(cmd)
 
-        print("todo...")
+        print_success()
 
 
     def step_14(self):
