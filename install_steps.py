@@ -1,8 +1,11 @@
 
 from __future__ import print_function
 from htb_install import *
+from configuration import *
 from colors import ColorPrinter
 import uuid, os, errno
+from shutil import copyfile
+
 
 class InstallSteps:
 
@@ -18,6 +21,8 @@ class InstallSteps:
 
         print_subStep("Set system language and keyboard layout")
         cmd = ['cp', 'templates/locale', '/etc/default/locale']
+        execute_command(cmd)
+        cmd = ['cp', 'templates/keyboard', '/etc/default/keyboard']
         execute_command(cmd)
         print_info("Your language has been set to 'LANG=de_DE.UTF-8' and keyboard layout to 'KEYMAP=de-latin1-nodeadkeys'")
 
@@ -113,7 +118,7 @@ class InstallSteps:
         execute_command(cmd)
 
         print_subStep("Test connection")
-        cmd = ['ping', '-c2', 'www.github.com']
+        cmd = ['ping', '-c2', 'www.google.com']
         execute_command(cmd)
 
         print_success()
@@ -168,10 +173,10 @@ class InstallSteps:
         """Setup additional system configuration"""
         print_step("Step 8: " + str(self.step_08.__doc__))
 
-        print_subStep("Allow shutdown when powerbutton has been pressed")
-        cmd = ['cp', 'templates/powerbtn.sh', '/etc/acpi/powerbtn.sh']
-        print_info("Edit file /etc/acpi/powerbtn.sh")
-        execute_command(cmd)
+        #print_subStep("Allow shutdown when powerbutton has been pressed")
+        #cmd = ['cp', 'templates/powerbtn.sh', '/etc/acpi/powerbtn.sh']
+        #print_info("Edit file /etc/acpi/powerbtn.sh")
+        #execute_command(cmd)
 
         print_subStep("Let ssh server send alive signal")
         rewrite_file("/etc/ssh/sshd_config", "ClientAliveInterval", "ClientAliveInterval 60\n")
@@ -288,24 +293,25 @@ class InstallSteps:
 
     def step_10(self):
         """ssh key exchange"""
-        print_step("Step 10: " + str(self.step_10.__doc__))
+        if self.actingType == MASTER:
+            print_step("Step 10: " + str(self.step_10.__doc__))
 
-        tempname = "/tmp/file" + str(uuid.uuid4()) #os.tempnam()
-        cmd = ['ssh-keygen', '-f', tempname, '-N', '']
-        execute_command(cmd)
-        try:
-            os.makedirs("/home/robot-local/.ssh")
-        except OSError as ex:
-           if not ex.errno == errno.EEXIST:
-               raise
-        cmd = ['cp', tempname, '/home/robot-local/.ssh/id_rsa']
-        execute_command(cmd)
-        cmd = ['cp', tempname + ".pub", '/home/robot-local/.ssh/id_rsa.pub']
-        execute_command(cmd)
-        cmd = ['ssh-copy-id', htb_config[int(self.robot)][0]]
-        execute_command(cmd)
+            tempname = "/tmp/file" + str(uuid.uuid4()) #os.tempnam()
+            cmd = ['ssh-keygen', '-f', tempname, '-N', '']
+            execute_command(cmd)
+            try:
+                os.makedirs("/home/robot-local/.ssh")
+            except OSError as ex:
+               if not ex.errno == errno.EEXIST:
+                   raise
+            cmd = ['cp', tempname, '/home/robot-local/.ssh/id_rsa']
+            execute_command(cmd)
+            cmd = ['cp', tempname + ".pub", '/home/robot-local/.ssh/id_rsa.pub']
+            execute_command(cmd)
+            cmd = ['ssh-copy-id', htb_config[int(self.robot)][0]]
+            execute_command(cmd)
 
-        print_success()
+            print_success()
 
 
     def step_11(self):
@@ -362,15 +368,36 @@ class InstallSteps:
             if not user_name:
                 user_name = os.environ.get('LOGNAME')
 
-            cmd = ['sudo', '-u', user_name, 'rosdep', 'update']
+            cmd = ['sudo', 'su', '-c', 'rosdep update', user_name]
             execute_command(cmd)
 
         print_success()
 
 
     def step_13(self):
-        """Create user robot"""
+        """Copy scripts and configuration to /opt"""
         print_step("Step 13: " + str(self.step_13.__doc__))
+
+        try:
+            os.makedirs("/opt/htb")
+        except OSError as ex:
+           if not ex.errno == errno.EEXIST:
+               raise
+
+        copyfile("configuration.py", "/opt/htb/configuration.py")
+        copyfile("htb-adduser.py", "/opt/htb/htb-adduser.py")
+        cmd = ['chmod', '+x', '/opt/htb/htb-adduser.py']
+        execute_command(cmd)
+
+        cmd = ['ln', '-s', '/opt/htb/htb-adduser.py', '/usr/bin/htb-adduser']
+        execute_command(cmd)
+
+        print("todo...")
+
+
+    def step_14(self):
+        """Create user robot"""
+        print_step("Step 14: " + str(self.step_14.__doc__))
 
         print_subStep("Create new user 'robot'")
         print_subStep("Create catkin workspace of robot")
@@ -379,9 +406,9 @@ class InstallSteps:
         print()
 
 
-    def step_14(self):
+    def step_15(self):
         """Get own htb-packages from git"""
-        print_step("Step 14: " + str(self.step_14.__doc__))
+        print_step("Step 15: " + str(self.step_15.__doc__))
 
         cmd = ['apt-get', 'install', 'libfreenect2', '--allow-unauthenticated']
         print("todo...")

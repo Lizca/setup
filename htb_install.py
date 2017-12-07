@@ -5,52 +5,13 @@ from __future__ import print_function
 
 import subprocess
 from colors import ColorPrinter
+from configuration import *
 import install_steps
 import sys
 
 
-############
-# WARNING: #
-############
-# The value of SLAVE has to be the number of existing client pcs.
-# The value of EXTERN has to be the value of SLAVE +1
-########################################################################
-UNDEFINED = -1
-MASTER = 0
-SLAVE = 2
-EXTERN = 3
-
-
 cp = ColorPrinter()
 
-htb_config = [
-    ['htb-b1', '10.0.0.10', MASTER, 'Odroid Master'],
-    ['htb-n1', '10.0.0.20', SLAVE, 'NUC Slave'],
-    ['htb-o1', '10.0.0.30', SLAVE, 'Ordoid Slave'],
-    ['extern', None, EXTERN, 'External pc']
-]
-
-packages_to_install = [
-    ["vim"], # editors
-    ["zsh"], # shells
-    ["ipython", "ipython3"],
-    ["htop"], # process viewer
-    ["ranger"], # file manager
-    ["tmux", "terminator"], # terminal multiplexer
-    ["gitg", "openssh-server", "tree", "meld"]
-]
-
-turtlebot_packages = [
-    "ros-kinetic-turtlebot"
-    #"ros-kinetic-turtlebot-apps",
-    #"ros-kinetic-turtlebot-interactions",
-    #"ros-kinetic-turtlebot-simulator",
-    #"ros-kinetic-ar-track-alvar-msgs"
-]
-
-external_install_steps = [
-    1, 5, 6, 7, 12
-]
 
 def execute_command(cmd, input=None):
     p = subprocess.Popen(cmd, stdin=subprocess.PIPE)
@@ -64,7 +25,7 @@ def execute_command(cmd, input=None):
 
 
 def print_info(msg):
-    print("\x1B[3m"+msg+"\x1B[23m")
+    cp.cfg('w', None, 'i').out(msg)
 
 
 def print_step(msg):
@@ -158,7 +119,7 @@ if __name__ == "__main__":
             elif pyVersion[0] >= 3 :
                 userInput = input("type 'Y' or 'n': ") # python 3
             else:
-                print("The currenty used python version is not compatible. Please use Python2.5 or higher.")
+                print("The currenty used python version is not compatible. Please use Python 2.5 or higher.")
                 exit(-1)
 
             if userInput == "" or userInput == 'Y' or userInput == 'y':
@@ -198,7 +159,7 @@ if __name__ == "__main__":
             elif pyVersion[0] >= 3:
                 step = input("-> : ")  # python 3
             else:
-                print("The currenty used python version is not compatible. Please use Python2.5 or higher.")
+                print("The currenty used python version is not compatible. Please use Python 2.5 or higher.")
                 exit(-1)
 
             if step == 'q':
