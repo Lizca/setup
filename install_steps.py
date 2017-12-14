@@ -3,7 +3,7 @@ from __future__ import print_function
 from htb_install import *
 from configuration import *
 from colors import ColorPrinter
-import uuid, os, errno
+import os, errno
 from shutil import copyfile
 
 
@@ -294,31 +294,8 @@ class InstallSteps:
 
 
     def step_10(self):
-        """ssh key exchange"""
-        if self.actingType == MASTER:
-            print_step("Step 10: " + str(self.step_10.__doc__))
-
-            tempname = "/tmp/file" + str(uuid.uuid4()) #os.tempnam()
-            cmd = ['ssh-keygen', '-f', tempname, '-N', '']
-            execute_command(cmd)
-            try:
-                os.makedirs("/home/robot-local/.ssh")
-            except OSError as ex:
-               if not ex.errno == errno.EEXIST:
-                   raise
-            cmd = ['cp', tempname, '/home/robot-local/.ssh/id_rsa']
-            execute_command(cmd)
-            cmd = ['cp', tempname + ".pub", '/home/robot-local/.ssh/id_rsa.pub']
-            execute_command(cmd)
-            cmd = ['ssh-copy-id', htb_config[int(self.robot)][0]]
-            execute_command(cmd)
-
-            print_success()
-
-
-    def step_11(self):
         """Setup NTP"""
-        print_step("Step 11: " + str(self.step_11.__doc__))
+        print_step("Step 10: " + str(self.step_10.__doc__))
 
         print_subStep("Install needed package")
         cmd = ['apt-get', 'install', 'ntp', '-y']
@@ -333,9 +310,9 @@ class InstallSteps:
         print_success()
 
 
-    def step_12(self):
+    def step_11(self):
         """Install ROS"""
-        print_step("Step 12: " + str(self.step_12.__doc__))
+        print_step("Step 11: " + str(self.step_11.__doc__))
 
         print_subStep("Setup source.list and keys")
         cmd = ['sh', '-c',
@@ -376,9 +353,9 @@ class InstallSteps:
         print_success()
 
 
-    def step_13(self):
+    def step_12(self):
         """Copy scripts and configuration to /opt"""
-        print_step("Step 13: " + str(self.step_13.__doc__))
+        print_step("Step 12: " + str(self.step_12.__doc__))
 
         try:
             os.makedirs("/opt/htb")
@@ -397,9 +374,9 @@ class InstallSteps:
         print_success()
 
 
-    def step_14(self):
+    def step_13(self):
         """Create user robot"""
-        print_step("Step 14: " + str(self.step_14.__doc__))
+        print_step("Step 13: " + str(self.step_13.__doc__))
 
         print_subStep("Create new user 'robot'")
         print_subStep("Create catkin workspace of robot")
@@ -408,9 +385,9 @@ class InstallSteps:
         print()
 
 
-    def step_15(self):
+    def step_14(self):
         """Get own htb-packages from git"""
-        print_step("Step 15: " + str(self.step_15.__doc__))
+        print_step("Step 14: " + str(self.step_14.__doc__))
 
         cmd = ['apt-get', 'install', 'libfreenect2', '--allow-unauthenticated']
         print("todo...")
