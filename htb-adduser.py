@@ -6,7 +6,7 @@ from __future__ import print_function
 import subprocess
 from colors import ColorPrinter
 from configuration import *
-import os, sys, errno
+import os, sys, errno, uuid
 import getpass
 
 
@@ -83,6 +83,24 @@ if __name__ == "__main__":
 
     print_step("Copying ssh-keys to other pcs") #, please enter password of new user")
     print("todo...")
+
+    tempname = "/tmp/file" + str(uuid.uuid4())  # os.tempnam()
+    cmd = ['ssh-keygen', '-f', tempname, '-N', '']
+    execute_command(cmd)
+    try:
+        os.makedirs("/home/robot-local/.ssh")
+    except OSError as ex:
+        if not ex.errno == errno.EEXIST:
+            raise
+    cmd = ['cp', tempname, '/home/robot-local/.ssh/id_rsa']
+    execute_command(cmd)
+    cmd = ['cp', tempname + ".pub", '/home/robot-local/.ssh/id_rsa.pub']
+    execute_command(cmd)
+
+    # cat ~/.ssh/id_rsa.pub >> ~ /.ssh / authorized_keys
+    # cmd = ['ssh-copy-id', htb_config[int(self.robot)][0]]
+    # execute_command(cmd)
+
 
 
     print_step("Setup ROS environment")

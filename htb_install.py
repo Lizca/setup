@@ -7,7 +7,7 @@ import subprocess
 from colors import ColorPrinter
 from configuration import *
 import install_steps
-import sys
+import sys, getpass
 
 
 cp = ColorPrinter()
@@ -38,13 +38,13 @@ def print_subStep(msg):
 
 
 def print_section(msg):
-    cp.cfg('g', None, 'b').out((len(msg)+4) *'=')
+    cp.cfg('b', None, 'b').out((len(msg)+4) *'=')
     cp.out('= ' + msg + ' =')
-    cp.cfg('g', None, 'b').out((len(msg)+4) *'=')
+    cp.cfg('b', None, 'b').out((len(msg)+4) *'=')
 
 
 def print_success():
-    cp.cfg('k', 'g', 'f').out("-> Successful")
+    cp.cfg('g', None, 'bu').out("-> Successful")
     print()
 
 
@@ -67,6 +67,12 @@ def rewrite_file(fileStr, searchStr, inputStr):
 
 if __name__ == "__main__":
 
+    # check if user has executed with sudo
+    if not getpass.getuser() == "root":
+        print("\x1B[91;3m" + "ERROR: YOU HAVE TO EXECUTE THIS INSTALL SCRIPT WITH SUDO RIGHTS!" + "\x1B[0m")
+        print_info("\tPlease run \n\t\tsudo ./htb_install.py \n\t or \tsudo python2 htb_install.py")
+        exit(-1)
+
     fnc_list, ext_fnc_list = [], []
     installSteps = install_steps.InstallSteps()
     pyVersion = sys.version_info
@@ -84,6 +90,7 @@ if __name__ == "__main__":
         else:
             fnc_str = 'step_' + str(fnc_num)
         ext_fnc_list.append(fnc_str)
+
 
 
     print_section("START EXECUTION")
@@ -131,7 +138,7 @@ if __name__ == "__main__":
                 print()
                 continue
         else:
-            print("This pc doesn't exist! Try again!")
+            print("This pc doesn't exist! Please try again!")
     print()
 
     while True:
@@ -178,7 +185,7 @@ if __name__ == "__main__":
                     raise RuntimeError
             except:
                 print()
-                print("This step doesn't exist! Try again!")
+                print("This step doesn't exist! Please try again!")
                 continue
 
         print()
@@ -204,9 +211,16 @@ if __name__ == "__main__":
 
             print_section('INSTALLATION ENDED SUCCESSFULLLY')
             print()
+
+            print_section('INSTALLATION ENDED SUCCESSFULLY')
+            print()
+
+            print("     \x1B[91;3m#\x1B[0m      | ")
+            print("    \x1B[91;3m# #\x1B[0m     | ")
+            print("   \x1B[91;3m#\x1B[0m | \x1B[91;3m#\x1B[0m    |  Please reboot now!  ")
+            print("  \x1B[91;3m#\x1B[0m  .  \x1B[91;3m#\x1B[0m   | ")
+            print(" \x1B[91;3m#########\x1B[0m  | ")
+            print()
+
             exit()
-
-
-        print_section('INSTALLATION ENDED SUCCESSFULLY')
-        print()
 
