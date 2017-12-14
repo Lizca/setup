@@ -221,8 +221,7 @@ class InstallSteps:
                         break
 
                 if not host_exist:
-                    file = open("/etc/hosts", 'r+')
-                    lines = file.readlines()
+                    file = open("/etc/hosts", 'a')
                     file.write(htb_config[r][1] + " " + htb_config[r][0] + '\n')
                     file.close()
 
@@ -368,7 +367,7 @@ class InstallSteps:
         cmd = ['chmod', '+x', '/opt/htb/htb-adduser.py']
         execute_command(cmd)
 
-        cmd = ['ln', '-s', '/opt/htb/htb-adduser.py', '/usr/bin/htb-adduser']
+        cmd = ['ln', '-sf', '/opt/htb/htb-adduser.py', '/usr/bin/htb-adduser']
         execute_command(cmd)
 
         print_success()

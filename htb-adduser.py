@@ -42,13 +42,14 @@ if __name__ == "__main__":
     hostname = os.uname()[1]
     new_username = sys.argv[1]
 
+
     if not hostname == "htb-b1":
         print("\x1B[91m" + "ERROR: CAN ONLY BE EXECUTED ON MASTER PC!" + "\x1B[0m")
         print_info("\tPlease change to htb-b1 (Odroid Master)")
         exit(-1)
 
     print_step("Create new user " + new_username)
-    cmd = ['/usr/sbin/adduser', new_username, '--home', '/home/'+new_username, '--disabled-password', '--ingroup', 'htb', '--gecos', '""']
+    cmd = ['/usr/sbin/adduser', new_username, '--home', '/u/'+new_username, '--disabled-password', '--ingroup', 'htb', '--gecos', '""']
 
     execute_command(cmd)
 
@@ -81,27 +82,32 @@ if __name__ == "__main__":
     print("todo...")
 
 
-    print_step("Copying ssh-keys to other pcs") #, please enter password of new user")
+    print_step("Copying ssh-keys to other pcs")
     print("todo...")
 
     tempname = "/tmp/file" + str(uuid.uuid4())  # os.tempnam()
-    cmd = ['ssh-keygen', '-f', tempname, '-N', '']
+    cmd = ['sudo', '-u', new_username, 'ssh-keygen', '-f', tempname, '-N', '']
     execute_command(cmd)
     try:
-        os.makedirs("/home/robot-local/.ssh")
+        os.makedirs("/u/" + new_username + "/.ssh")
     except OSError as ex:
         if not ex.errno == errno.EEXIST:
             raise
-    cmd = ['cp', tempname, '/home/robot-local/.ssh/id_rsa']
+    cmd = ['cp', tempname, '/u/' + new_username + '/.ssh/id_rsa']
     execute_command(cmd)
-    cmd = ['cp', tempname + ".pub", '/home/robot-local/.ssh/id_rsa.pub']
+    cmd = ['cp', tempname + ".pub", '/u/' + new_username + '/.ssh/id_rsa.pub']
     execute_command(cmd)
 
-    # cat ~/.ssh/id_rsa.pub >> ~ /.ssh / authorized_keys
-    # cmd = ['ssh-copy-id', htb_config[int(self.robot)][0]]
-    # execute_command(cmd)
+    key_file = open("/home/" + new_username + "/.ssh/id_rsa.pub", 'r')
+    key_file_lines = key_file.readlines()
+    key_file.close()
 
+    auth_keys_file = open("/u/" + new_username + "/.ssh/authorized_keys", 'a')
+    for line in key_file_lines:
+        auth_keys_file.write("\n")
+        auth_keys_file.write(line)
 
+    auth_keys_file.close()
 
     print_step("Setup ROS environment")
     if not os.path.exists("/etc/ros/rosdep/"):
@@ -111,8 +117,11 @@ if __name__ == "__main__":
     cmd = ['sudo', 'su', '-c', 'rosdep update', new_username]
     execute_command(cmd)
 
+    print_step("Setup catkin workspace 'catkinws'")
     try:
         os.makedirs("/u/" + new_username + "/catkinws")
+        os.makedirs("/u/" + new_username + "/catkinws/src")
+        execute_command(cmd)
     except OSError as ex:
         if not ex.errno == errno.EEXIST:
             raise
