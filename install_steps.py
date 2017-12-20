@@ -14,16 +14,15 @@ class InstallSteps:
     robotIP = None
 
     cp = ColorPrinter()
+    execution_path = None
 
     def step_01(self):
         """Setup language and time settings"""
         print_step("Step 1: " + str(self.step_01.__doc__))
 
         print_subStep("Set system language and keyboard layout")
-        cmd = ['cp', 'templates/locale', '/etc/default/locale']
-        execute_command(cmd)
-        cmd = ['cp', 'templates/keyboard', '/etc/default/keyboard']
-        execute_command(cmd)
+        copyfile(self.execution_path + "/templates/locale", "/etc/default/locale")
+        copyfile(self.execution_path + '/templates/keyboard', '/etc/default/keyboard')
         print_info("Your language has been set to 'LANG=de_DE.UTF-8' and keyboard layout to 'KEYMAP=de-latin1-nodeadkeys'")
 
         print_subStep("Set time zone")
@@ -42,8 +41,7 @@ class InstallSteps:
         execute_command(['date'])
 
         print_subStep("Generate locales")
-        cmd = ['cp', 'templates/locale.gen', '/etc/locale.gen']
-        execute_command(cmd)
+        copyfile(self.execution_path + '/templates/locale.gen', '/etc/locale.gen')
         cmd = (["locale-gen"])
         execute_command(cmd)
 
@@ -97,7 +95,7 @@ class InstallSteps:
 
         print_subStep("Create file /etc/network/interfaces")
 
-        tempfile = open("templates/interfaces")
+        tempfile = open(self.execution_path + "/templates/interfaces")
         interfaces = open("/etc/network/interfaces", 'w+')
         for line in tempfile:
             if line.startswith("auto $(iface)"):
@@ -175,9 +173,8 @@ class InstallSteps:
 
         '''
             print_subStep("Allow shutdown when powerbutton has been pressed")
-            cmd = ['cp', 'templates/powerbtn.sh', '/etc/acpi/powerbtn.sh']
+            copyfile(self.execution_path + '/templates/powerbtn.sh', '/etc/acpi/powerbtn.sh')
             print_info("Edit file /etc/acpi/powerbtn.sh")
-            execute_command(cmd)
         '''
 
         print_subStep("Let ssh server send alive signal")
@@ -357,13 +354,14 @@ class InstallSteps:
         print_step("Step 12: " + str(self.step_12.__doc__))
 
         try:
-            os.makedirs("/opt/htb")
+            os.makedirs("/opt/htb/templates")
         except OSError as ex:
            if not ex.errno == errno.EEXIST:
                raise
 
-        copyfile("configuration.py", "/opt/htb/configuration.py")
-        copyfile("htb-adduser.py", "/opt/htb/htb-adduser.py")
+        copyfile(self.execution_path + "/configuration.py", "/opt/htb/configuration.py")
+        copyfile(self.execution_path + "/htb-adduser.py", "/opt/htb/htb-adduser.py")
+        copyfile(self.execution_path + "/templates/htb_ros_env.sh", "/opt/htb/templates/htb_ros_env.sh")
         cmd = ['chmod', '+x', '/opt/htb/htb-adduser.py']
         execute_command(cmd)
 

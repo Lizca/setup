@@ -7,11 +7,10 @@ import subprocess
 from colors import ColorPrinter
 from configuration import *
 import install_steps
-import sys, getpass
+import sys, getpass, os
 
 
 cp = ColorPrinter()
-
 
 def execute_command(cmd, input=None):
     p = subprocess.Popen(cmd, stdin=subprocess.PIPE)
@@ -76,6 +75,7 @@ if __name__ == "__main__":
     fnc_list, ext_fnc_list = [], []
     installSteps = install_steps.InstallSteps()
     pyVersion = sys.version_info
+    installSteps.execution_path = os.path.realpath(os.path.dirname(sys.argv[0]))
 
     # Get all existing install step functions
     numFnc = 0

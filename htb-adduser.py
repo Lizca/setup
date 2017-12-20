@@ -4,18 +4,19 @@
 from __future__ import print_function
 
 import subprocess
-from colors import ColorPrinter
-from configuration import *
 import os, sys, errno, uuid
+from shutil import copyfile
 import getpass
+
+from configuration import *
 
 
 def print_info(msg):
-    cp.cfg('w', None, 'i').out(msg)
+    print("\x1b[37;3m" + msg + "\x1b[0m")
 
 
 def print_step(msg):
-    cp.cfg('y', None, 'i').out(msg)
+    print("\x1b[33;3m" + msg + "\x1b[0m")
 
 
 def execute_command(cmd, input=None):
@@ -24,14 +25,13 @@ def execute_command(cmd, input=None):
     ret_code = p.poll()
 
     if ret_code:
-        cp.cfg('k', 'r', 'f').out("-> ERROR", ret_code)
-        cp.cfg('r', None, 'b').out("An error occurd during the last command! Got error number:", ret_code)
+        print("\x1b[91;3m" + "-> ERROR" + str(ret_code) + "\x1b[0m")
+        print("\x1b[91;3m An error occurd during the last command! Got error number:" + str(ret_code) + "\x1b[0m")
         exit(-1)
 
 
 if __name__ == "__main__":
 
-    cp = ColorPrinter()
     pyVersion = sys.version_info
 
     if len(sys.argv) <= 1:
@@ -39,8 +39,10 @@ if __name__ == "__main__":
         print_info("\tPlease run \n\t\tsudo ./htb-adduser.py [name of new user] \n\t or \tsudo python2 htb-adduser.py [name of new user]")
         exit(-1)
 
+    execution_path = os.path.realpath(os.path.dirname(sys.argv[0]))
     hostname = os.uname()[1]
     new_username = sys.argv[1]
+    user_home_dir = "/u/" + new_username
 
 
     if not hostname == "htb-b1":
@@ -49,7 +51,7 @@ if __name__ == "__main__":
         exit(-1)
 
     print_step("Create new user " + new_username)
-    cmd = ['/usr/sbin/adduser', new_username, '--home', '/u/'+new_username, '--disabled-password', '--ingroup', 'htb', '--gecos', '""']
+    cmd = ['/usr/sbin/adduser', new_username, '--home', user_home_dir, '--disabled-password', '--ingroup', 'htb', '--gecos', '""']
 
     execute_command(cmd)
 
@@ -78,13 +80,26 @@ if __name__ == "__main__":
         execute_command(cmd)
 
 
-    print_step("Setup bash and zsh environment")
-    print("todo...")
+
+    print_step("Setup bash environment")
+    copyfile(execution_path + "/templates/htb_ros_env.sh", user_home_dir + "/.htb_ros_env.sh")
+
+    file = open(str(user_home_dir + "/.bashrc"), 'r')
+    lines = file.readlines()
+    file.close()
+
+    inputStr_exist = False
+    for line in lines:
+        if line.startswith(str("source ~/.htb_ros_env.sh")):
+            inputStr_exist = True
+
+    if not inputStr_exist:
+        file = open(str(user_home_dir + "/.bashrc"), 'a')
+        file.write("\n source ~/.htb_ros_env.sh")
+        file.close()
 
 
     print_step("Copying ssh-keys to other pcs")
-    print("todo...")
-
     tempname = "/tmp/file" + str(uuid.uuid4())  # os.tempnam()
     cmd = ['sudo', '-u', new_username, 'ssh-keygen', '-f', tempname, '-N', '']
     execute_command(cmd)
@@ -93,16 +108,16 @@ if __name__ == "__main__":
     except OSError as ex:
         if not ex.errno == errno.EEXIST:
             raise
-    cmd = ['cp', tempname, '/u/' + new_username + '/.ssh/id_rsa']
+    cmd = ['cp', tempname, user_home_dir + '/.ssh/id_rsa']
     execute_command(cmd)
-    cmd = ['cp', tempname + ".pub", '/u/' + new_username + '/.ssh/id_rsa.pub']
+    cmd = ['cp', tempname + ".pub", user_home_dir + '/.ssh/id_rsa.pub']
     execute_command(cmd)
 
-    key_file = open("/home/" + new_username + "/.ssh/id_rsa.pub", 'r')
+    key_file = open(user_home_dir + "/.ssh/id_rsa.pub", 'r')
     key_file_lines = key_file.readlines()
     key_file.close()
 
-    auth_keys_file = open("/u/" + new_username + "/.ssh/authorized_keys", 'a')
+    auth_keys_file = open(user_home_dir + "/.ssh/authorized_keys", 'a')
     for line in key_file_lines:
         auth_keys_file.write("\n")
         auth_keys_file.write(line)
@@ -117,10 +132,10 @@ if __name__ == "__main__":
     cmd = ['sudo', 'su', '-c', 'rosdep update', new_username]
     execute_command(cmd)
 
-    print_step("Setup catkin workspace 'catkinws'")
+    print_step("Create catkin workspace 'catkinws'")
     try:
-        os.makedirs("/u/" + new_username + "/catkinws")
-        os.makedirs("/u/" + new_username + "/catkinws/src")
+        os.makedirs(user_home_dir + "/catkinws")
+        os.makedirs(user_home_dir + "/catkinws/src")
         execute_command(cmd)
     except OSError as ex:
         if not ex.errno == errno.EEXIST:
